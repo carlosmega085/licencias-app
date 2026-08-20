@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generador Universal de Suscripciones Premium MVP</title>
+    <style>
+      :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --success: #10b981;
+        --background: #0f172a;
+        --card: #1e293b;
+        --text: #f8fafc;
+        --text-sub: #94a3b8;
+        --border: #334155;
+        --error: #ef4444;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        background-color: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 30px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow:
+          0 10px 25px -5px rgba(0, 0, 0, 0.3),
+          0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .logo-container {
+        display: inline-flex;
+        background-color: rgba(79, 70, 229, 0.1);
+        padding: 12px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+      }
+
+      .logo-icon {
+        font-size: 32px;
+      }
+
+      h1 {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 4px;
+      }
+
+      .subtitle {
+        font-size: 13px;
+        color: var(--text-sub);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 6px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        background-color: var(--background);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 12px;
+        border-radius: 10px;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--primary);
+      }
+
+      input::placeholder {
+        color: #64748b;
+      }
+
+      .btn {
+        width: 100%;
+        background-color: var(--primary);
+        color: var(--text);
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          background-color 0.2s,
+          transform 0.1s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .btn:hover {
+        background-color: var(--primary-hover);
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      .result-container {
+        margin-top: 24px;
+        background-color: rgba(15, 23, 42, 0.5);
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        display: none;
+      }
+
+      .result-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--success);
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .code-box {
+        background-color: var(--background);
+        border: 1px solid var(--border);
+        padding: 12px;
+        border-radius: 8px;
+        font-family: monospace;
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--text);
+        text-align: center;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+        user-select: all;
+      }
+
+      .actions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .btn-secondary {
+        background-color: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        transition: background-color 0.2s;
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--border);
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background-color: var(--success);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 14px;
+        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 100;
+      }
+
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      #customFields {
+        background-color: rgba(15, 23, 42, 0.3);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 20px;
+      }
+
+      .error-msg {
+        color: var(--error);
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Login Screen -->
+    <div class="container" id="loginContainer">
+      <div class="header">
+        <div class="logo-container">
+          <span class="logo-icon">🔒</span>
+        </div>
+        <h1>Acceso Protegido</h1>
+        <p class="subtitle">Panel de Control de Administrador</p>
+      </div>
+
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="adminPassword">Contraseña de Propietario</label>
+          <input
+            type="password"
+            id="adminPassword"
+            placeholder="Introduce la contraseña"
+            required
+            autocomplete="current-password"
+          />
+          <div id="loginError" class="error-msg" style="display: none;">Contraseña incorrecta. Inténtalo de nuevo.</div>
+        </div>
+
+        <button type="submit" class="btn">
+          Ingresar al Panel
+        </button>
+      </form>
+    </div>
+
+    <!-- Generator Panel (Hidden by Default) -->
+    <div class="container" id="generatorContainer" style="display: none;">
+      <div class="header">
+        <div class="logo-container">
+          <span class="logo-icon">🔑</span>
+        </div>
+        <h1>Generador Universal</h1>
+        <p class="subtitle">Licenciamiento Offline para MVPs</p>
+      </div>
+
+      <form id="generatorForm" onsubmit="handleGenerate(event)">
+        <div class="form-group">
+          <label for="appSelect">Aplicación / Proyecto</label>
+          <select id="appSelect" onchange="toggleCustomFields()">
+            <option value="citapro">CitaPro (Prefijo: CP)</option>
+            <option value="lumi">Lumi (Prefijo: LM)</option>
+            <option value="gympro">GymPro (Prefijo: GP)</option>
+            <option value="custom">Personalizado...</option>
+          </select>
+        </div>
+
+        <div id="customFields" style="display: none;">
+          <div class="form-group">
+            <label for="customPrefix">Prefijo del Código (2 Letras)</label>
+            <input
+              type="text"
+              id="customPrefix"
+              placeholder="Ej. XY"
+              maxlength="2"
+              style="text-transform: uppercase"
+            />
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="customSecret">Clave Secreta del Proyecto</label>
+            <input
+              type="text"
+              id="customSecret"
+              placeholder="Ej. MI-PROYECTO-SECRET-KEY"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="businessId">ID de Suscripción del Cliente</label>
+          <input
+            type="text"
+            id="businessId"
+            placeholder="Ej. X9F2A8"
+            maxlength="6"
+            required
+            autocomplete="off"
+            style="text-transform: uppercase"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="days">Plan de Licencia</label>
+          <select id="days">
+            <option value="30">30 Días (1 Mes) — C$150.00</option>
+            <option value="90">90 Días (3 Meses) — C$400.00</option>
+            <option value="180">180 Días (6 Meses) — C$800.00</option>
+            <option value="365">365 Días (1 Año) — C$1,500.00</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn">
+          <span>🎟️</span> Generar Cupón Premium
+        </button>
+      </form>
+
+      <div class="result-container" id="resultContainer">
+        <div class="result-title"><span>✓</span> Código Generado con Éxito</div>
+        <div class="code-box" id="codeDisplay">CP-XXXXX-DIAS-YYYYYY</div>
+
+        <div class="actions-grid">
+          <button class="btn-secondary" onclick="copyOnlyCode()">
+            <span>📋</span> Copiar Código
+          </button>
+          <button class="btn-secondary" onclick="copyWhatsAppMessage()">
+            <span>💬</span> WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">¡Mensaje copiado al portapapeles!</div>
+
+    <script>
+      let lastGeneratedCode = "";
+      let lastGeneratedDays = 30;
+      let lastGeneratedAppName = "CitaPro";
+
+      const SECRET_KEY = "CITAPRO-OFFLINE-SUB-KEY-2026-NIO";
+      const TARGET_PASSWORD_HASH = "F66B1A3"; // Hash para la contraseña "citapro2026"
+
+      // Validar si ya está logueado en esta sesión de pestaña
+      if (sessionStorage.getItem("admin_authenticated") === "true") {
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("generatorContainer").style.display = "block";
+      }
+
+      function hashPassword(password) {
+        let hash = 0;
+        const input = password + SECRET_KEY;
+        for (let i = 0; i < input.length; i++) {
+          const char = input.charCodeAt(i);
+          hash = (hash << 5) - hash + char;
+          hash = hash & hash;
+        }
+        return Math.abs(hash).toString(16).toUpperCase();
+      }
+
+      function handleLogin(e) {
+        e.preventDefault();
+        const pwd = document.getElementById("adminPassword").value;
+        const errorDiv = document.getElementById("loginError");
+        
+        errorDiv.style.display = "none";
+        
+        if (hashPassword(pwd) === TARGET_PASSWORD_HASH) {
+          sessionStorage.setItem("admin_authenticated", "true");
+          document.getElementById("loginContainer").style.display = "none";
+          document.getElementById("generatorContainer").style.display = "block";
+        } else {
+          errorDiv.style.display = "block";
+          document.getElementById("adminPassword").value = "";
+          document.getElementById("adminPassword").focus();
+        }
+      }
+
+      const APPS = {
+        citapro: {
+          name: "CitaPro",
+          prefix: "CP",
+          secret: "CITAPRO-OFFLINE-SUB-KEY-2026-NIO"
+        },
+        lumi: {
+          name: "Lumi",
+          prefix: "LM",
+          secret: "LUMI-OFFLINE-SUB-KEY-2026-NIO"
+        },
+        gympro: {
+          name: "GymPro",
+          prefix: "GP",
+          secret: "GYMPRO-OFFLINE-SUB-KEY-2026-NIO"
+        }
+      };
+
+      function toggleCustomFields() {
+        const select = document.getElementById("appSelect").value;
+        const customFields = document.getElementById("customFields");
+        if (select === "custom") {
+          customFields.style.display = "block";
+          document.getElementById("customPrefix").required = true;
+          document.getElementById("customSecret").required = true;
+        } else {
+          customFields.style.display = "none";
+          document.getElementById("customPrefix").required = false;
+          document.getElementById("customPrefix").value = "";
+          document.getElementById("customSecret").required = false;
+          document.getElementById("customSecret").value = "";
+        }
+      }
+
+      function generateCodeSignature(seed, days, businessId, secretKey) {
+        let hash = 0;
+        const input = seed + "_" + days + "_" + businessId + secretKey;
+        for (let i = 0; i < input.length; i++) {
+          const char = input.charCodeAt(i);
+          hash = (hash << 5) - hash + char;
+          hash = hash & hash;
+        }
+        return Math.abs(hash).toString(16).toUpperCase().substring(0, 6);
+      }
+
+      function handleGenerate(e) {
+        e.preventDefault();
+
+        const appType = document.getElementById("appSelect").value;
+        const rawId = document.getElementById("businessId").value.trim().toUpperCase();
+        const days = parseInt(document.getElementById("days").value, 10);
+
+        if (rawId.length !== 6) {
+          alert("El ID de Suscripción debe tener exactamente 6 caracteres.");
+          return;
+        }
+
+        let prefix = "";
+        let secretKey = "";
+        let appName = "";
+
+        if (appType === "custom") {
+          prefix = document.getElementById("customPrefix").value.trim().toUpperCase();
+          secretKey = document.getElementById("customSecret").value.trim();
+          appName = "Mi App";
+          
+          if (prefix.length !== 2) {
+            alert("El prefijo personalizado debe tener exactamente 2 letras (Ej. XY).");
+            return;
+          }
+          if (!secretKey) {
+            alert("Debes ingresar la Clave Secreta del Proyecto.");
+            return;
+          }
+        } else {
+          const appConfig = APPS[appType];
+          prefix = appConfig.prefix;
+          secretKey = appConfig.secret;
+          appName = appConfig.name;
+        }
+
+        // Generar seed aleatorio de 5 dígitos
+        const seed = Math.floor(10000 + Math.random() * 90000).toString();
+        const signature = generateCodeSignature(seed, days.toString(), rawId, secretKey);
+
+        lastGeneratedCode = `${prefix}-${seed}-${days}-${signature}`;
+        lastGeneratedDays = days;
+        lastGeneratedAppName = appName;
+
+        document.getElementById("codeDisplay").innerText = lastGeneratedCode;
+        document.getElementById("resultContainer").style.display = "block";
+      }
+
+      function copyOnlyCode() {
+        navigator.clipboard.writeText(lastGeneratedCode).then(() => {
+          showToast("¡Código copiado al portapapeles!");
+        });
+      }
+
+      function copyWhatsAppMessage() {
+        const months = Math.round(lastGeneratedDays / 30);
+        const text =
+          `*¡Tu Plan Premium de ${lastGeneratedAppName} está listo!* 🌟\n\n` +
+          `🔑 *Código:* \`${lastGeneratedCode}\`\n` +
+          `📅 *Duración:* ${lastGeneratedDays} días (${months === 1 ? "1 mes" : months + " meses"})\n` +
+          `📱 *Para activar:* Ingresa este código en *Más ➔ Ajustes* en tu aplicación ${lastGeneratedAppName}.\n\n` +
+          `_¡Gracias por tu pago! Disfruta del sistema sin límites._`;
+
+        navigator.clipboard.writeText(text).then(() => {
+          showToast("¡Mensaje de WhatsApp copiado!");
+        });
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.innerText = message;
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 2500);
+      }
+    </script>
+  </body>
+</html>
